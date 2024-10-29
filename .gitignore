@@ -4,6 +4,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+reports/
 
 # Playwright
 playwright-report/
@@ -14,15 +15,6 @@ test-results/
 logs/
 *.log
 *.log.*
-
-# Environment variables
-.env
-.env.test
-.env.*.local
-
-# OS-specific
-.DS_Store
-Thumbs.db
 
 # IDEs and Editors
 .vscode/

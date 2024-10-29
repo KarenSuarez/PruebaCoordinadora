@@ -75,8 +75,13 @@ After(async () => {
   await apiRequestContext.dispose();
 });
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 Given("la solicitud de recogida tiene la fecha {string}", async (fecha) => {
   requestData.fechaRecogida = fecha;
+  requestData.documento = getRandomInt(23131, 94827478).toString();
 });
 
 Given(
@@ -103,13 +108,23 @@ Then("el código de respuesta debe ser {string}", async (expectedStatusCode) => 
   assert.strictEqual(response.status(), parseInt(expectedStatusCode));
 });
 
+Then("el mensaje debe ser {string}", async (expectedMessage) => {
+  const responseBody = await response.json();
+  const actualMessage = responseBody.isError
+    ? responseBody.data.message
+    : responseBody.data.id_recogida.message;
+
+  assert.strictEqual(actualMessage, expectedMessage);
+});
+
 Then("el mensaje debe indicar {string}", async (expectedMessage) => {
-    const responseBody = await response.json();
-    console.log(`Mensaje recibido: ${responseBody.data.id_recogida.message}`);
-    assert.strictEqual(responseBody.data.id_recogida.message, expectedMessage);
-  });
-  
-  
+  const responseBody = await response.json();
+  const actualMessage = responseBody.data.message;
+  const expectedFullMessage = responseBody.data.idRecogidaAnterior
+    ? `${expectedMessage}, id: ${responseBody.data.idRecogidaAnterior}`
+    : responseBody.data.message;
+  assert.strictEqual(actualMessage, expectedFullMessage);
+});
 
 async function sendRequest() {
   return await apiRequestContext.post(
